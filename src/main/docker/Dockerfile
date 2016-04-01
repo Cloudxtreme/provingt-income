@@ -6,7 +6,7 @@ VOLUME /tmp
 
 USER root
 
-ADD uk.gov.digital.ho.proving.income.api-0.1.0.jar /
+ADD uk.gov.digital.ho.proving.income.api-1.0-SNAPSHOT.jar /
+ADD src/main/resources/json/ src/main/resources/json/
 
-ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/uk.gov.digital.ho.proving.income.api-0.1.0.jar"]
-#ENTRYPOINT ["java", "-version"]
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/uk.gov.digital.ho.proving.income.api-1.0-SNAPSHOT.jar"]

@@ -1,0 +1,19 @@
+{
+  "applicant": {
+    "title": "Mr",
+    "forename": "Jon",
+    "surname": "Taylor",
+    "nino": "AA123456A"
+  },
+  "applicationReceivedDate": "2015-01-23T12:31:28.884Z",
+  "category": "A",
+  "threshold": {
+      "amount": 18600.00,
+      "isoCurrencyCode": "GBP"
+  },
+  "financialRequirementsCheck" : {
+    "met": true,
+    "checkedFrom": "2015-01-23T12:31:28.884Z",
+    "checkedTo": "2015-01-23T12:31:28.884Z"
+  }
+}

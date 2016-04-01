@@ -28,7 +28,6 @@ apply plugin: 'docker'
 apply plugin: 'com.wiredforcode.spawn'
 apply plugin: 'net.serenity-bdd.aggregator'
 
-
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -89,7 +88,7 @@ dependencies {
 mainClassName = "uk.gov.digital.ho.proving.income.ServiceRunner"
 
 task buildDocker(type: Docker, dependsOn: build) {
-    push = true
+    push = false
     applicationName = jar.baseName
     dockerfile = file('src/main/docker/Dockerfile')
     doFirst {
@@ -97,6 +96,11 @@ task buildDocker(type: Docker, dependsOn: build) {
             from jar
             into stageDir
         }
+        copy {
+            from "src/main/resources/json/"
+            into "build/docker/src/main/resources/json/"
+        }
+
     }
 }
 
@@ -107,47 +111,7 @@ task startServer(type: SpawnProcessTask, dependsOn: 'assemble') {
 
 task stopServer(type: KillProcessTask)
 
-configurations {
-    cucumberRuntime {
-        extendsFrom testRuntime
-    }
-    acceptanceTestCompile.extendsFrom testCompile
-    acceptanceTestRuntime.extendsFrom testRuntime
-}
+test.dependsOn startServer
+test.finalizedBy stopServer
 
-sourceSets {
-    acceptanceTest {
-        java {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
-            srcDir file('src/acceptanceTest/java')
-        }
-    }
-}
-
-task acceptanceTest(type: Test) {
-    testClassesDir = sourceSets.acceptanceTest.output.classesDir
-    classpath = sourceSets.acceptanceTest.runtimeClasspath
-    outputs.upToDateWhen { false }
-}
-
-//task acceptanceTest() {
-//    doLast {
-//        javaexec {
-//            main = "cucumber.api.cli.Main"
-//            classpath = configurations.cucumberRuntime
-//            args = [
-//                    '--plugin',
-//                    'pretty',
-//                    '--glue',
-//                    'src/test/groovy/cucumber/',
-////                    '--tags',
-////                    '~@beingdeveloped',
-//                    'specs/income-proving/family-tm-caseworker-tool/SD37 Tool identifies Applicant meets Category A Financial Requirement.feature'
-//            ]
-//        }
-//    }
-//}
-
-acceptanceTest.dependsOn startServer
-acceptanceTest.finalizedBy stopServer
+gradle.startParameter.continueOnFailure = true
