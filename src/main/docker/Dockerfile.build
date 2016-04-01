@@ -1,0 +1,13 @@
+FROM quay.io/ukhomeofficedigital/openjdk8:v0.1.2
+
+RUN mkdir build
+
+ADD . build/
+
+RUN ls build
+
+RUN java -version
+
+RUN cd build && ./gradlew clean build
+
+RUN ls build/build/libs

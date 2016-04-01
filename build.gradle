@@ -1,13 +1,22 @@
+import com.wiredforcode.gradle.spawn.*
+
 group 'uk.gov.digital.ho.proving.income'
 version '1.0-SNAPSHOT'
+
+def jarName = 'uk.gov.digital.ho.proving.income.api'
+def cucumberVersion = "1.2.4"
 
 buildscript {
     repositories {
         mavenCentral()
+        maven { url 'http://dl.bintray.com/vermeulen-mp/gradle-plugins' }
+        jcenter()
     }
     dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE")
-        classpath('se.transmode.gradle:gradle-docker:1.2')
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.3.3.RELEASE'
+        classpath 'se.transmode.gradle:gradle-docker:1.2'
+        classpath 'com.wiredforcode:gradle-spawn-plugin:0.6.0'
+        classpath 'net.serenity-bdd:serenity-gradle-plugin:1.1.28'
     }
 }
 
@@ -16,13 +25,16 @@ apply plugin: 'groovy'
 apply plugin: 'spring-boot'
 apply plugin: 'application'
 apply plugin: 'docker'
+apply plugin: 'com.wiredforcode.spawn'
+apply plugin: 'net.serenity-bdd.aggregator'
+
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 jar {
-    baseName = 'uk.gov.digital.ho.proving.income.api'
-    version =  '0.1.0'
+    baseName = "${jarName}"
+    version = "${version}"
 }
 
 repositories {
@@ -34,8 +46,6 @@ repositories {
 dependencies {
     compile 'org.springframework.boot:spring-boot-starter-web:1.3.3.RELEASE'
     compile 'org.springframework.boot:spring-boot:1.3.3.RELEASE'
-//    compile 'org.mongodb:mongodb-driver:3.0.4'
-//    compile 'org.mongodb:bson:3.0.4'
     compile 'org.json:json:20160212'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.2'
@@ -52,12 +62,34 @@ dependencies {
     testCompile 'org.springframework:spring-test:4.2.5.RELEASE'
     testCompile 'cglib:cglib-nodep:3.2.1'
     testCompile 'org.objenesis:objenesis:2.2'
+    testCompile "info.cukes:cucumber-junit:$cucumberVersion"
+    testCompile "info.cukes:cucumber-groovy:$cucumberVersion"
+    testCompile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
+
+    // ++ Serenity BDD
+    testCompile 'net.serenity-bdd:serenity-core:1.1.28'
+    testCompile 'net.serenity-bdd:serenity-junit:1.1.28'
+    testCompile 'net.serenity-bdd:serenity-cucumber:1.1.5'
+
+    testCompile('junit:junit:4.12')
+
+    testCompile('org.assertj:assertj-core:1.7.0')
+//    testCompile('org.slf4j:slf4j-simple:1.7.7')
+    // -- Serenity BDD
+
+    testCompile('com.github.detro.ghostdriver:phantomjsdriver:1.0.4')
+    testCompile('org.seleniumhq.selenium:selenium-server:2.50.1')
+
+    testCompile "org.spockframework:spock-core:1.0-groovy-2.4"
+
+    testCompile 'org.apache.commons:commons-lang3:3.4'
+
 }
 
-mainClassName="uk.gov.digital.ho.proving.income.ServiceRunner"
+mainClassName = "uk.gov.digital.ho.proving.income.ServiceRunner"
 
 task buildDocker(type: Docker, dependsOn: build) {
-    push = false
+    push = true
     applicationName = jar.baseName
     dockerfile = file('src/main/docker/Dockerfile')
     doFirst {
@@ -67,3 +99,55 @@ task buildDocker(type: Docker, dependsOn: build) {
         }
     }
 }
+
+task startServer(type: SpawnProcessTask, dependsOn: 'assemble') {
+    command "java -jar ${projectDir}/build/libs/${jarName}-${version}.jar"
+    ready 'Started ServiceRunner'
+}
+
+task stopServer(type: KillProcessTask)
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testRuntime
+    }
+    acceptanceTestCompile.extendsFrom testCompile
+    acceptanceTestRuntime.extendsFrom testRuntime
+}
+
+sourceSets {
+    acceptanceTest {
+        java {
+            compileClasspath += main.output + test.output
+            runtimeClasspath += main.output + test.output
+            srcDir file('src/acceptanceTest/java')
+        }
+    }
+}
+
+task acceptanceTest(type: Test) {
+    testClassesDir = sourceSets.acceptanceTest.output.classesDir
+    classpath = sourceSets.acceptanceTest.runtimeClasspath
+    outputs.upToDateWhen { false }
+}
+
+//task acceptanceTest() {
+//    doLast {
+//        javaexec {
+//            main = "cucumber.api.cli.Main"
+//            classpath = configurations.cucumberRuntime
+//            args = [
+//                    '--plugin',
+//                    'pretty',
+//                    '--glue',
+//                    'src/test/groovy/cucumber/',
+////                    '--tags',
+////                    '~@beingdeveloped',
+//                    'specs/income-proving/family-tm-caseworker-tool/SD37 Tool identifies Applicant meets Category A Financial Requirement.feature'
+//            ]
+//        }
+//    }
+//}
+
+acceptanceTest.dependsOn startServer
+acceptanceTest.finalizedBy stopServer
