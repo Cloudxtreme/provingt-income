@@ -45,7 +45,7 @@ class PTTestSteps {
 
         entries.get("NINO") + "_" + applicationReceivedDate.replace('/', '-')
 
-        def client = new RESTClient('http://localhost:8081/')
+        def client = new RESTClient('http://localhost:8123/')
         client.setContentType(ContentType.JSON)
         def resp = client.get(path: "application?nino=" + entries.get("NINO") + "&applicationReceivedDate" + applicationReceivedDate);
 
