@@ -87,8 +87,14 @@ dependencies {
 
 mainClassName = "uk.gov.digital.ho.proving.income.ServiceRunner"
 
+docker {
+    registry = "https://quay.io/repository/asmoores/"
+}
+
 task buildDocker(type: Docker, dependsOn: build) {
+    registry = "quay.io/ukhomeofficedigital"
     push = false
+//    tag = 'quay.io/asmoores/' + jar.baseName + version
     applicationName = jar.baseName
     dockerfile = file('src/main/docker/Dockerfile')
     doFirst {
