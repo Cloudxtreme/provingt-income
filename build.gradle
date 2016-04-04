@@ -121,3 +121,9 @@ test.dependsOn startServer
 test.finalizedBy stopServer
 
 gradle.startParameter.continueOnFailure = true
+
+task pushDockerImage(type: Exec) {
+    executable "sh"
+    args "-c", "docker push quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:1.0-SNAPSHOT"
+}
+
