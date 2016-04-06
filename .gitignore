@@ -1,4 +1,5 @@
 target/*
+services/tmp/*
 .classpath
 .project
 .idea
@@ -10,4 +11,3 @@ build
 runtime
 *.log
 *.iml
-
