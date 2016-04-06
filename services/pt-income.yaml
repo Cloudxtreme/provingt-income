@@ -1,0 +1,4 @@
+---
+
+Deploys:
+  - path: ./k8resources/
