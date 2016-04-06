@@ -31,7 +31,7 @@ spec:
           - name: https
             containerPort: 443
       - name: pt-income
-        image: quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api
+        image: quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:${ pt-income-version }
         resources:
           limits:
             cpu: 400m
