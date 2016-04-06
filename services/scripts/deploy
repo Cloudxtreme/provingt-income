@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Script used as deployment entrypoint
+
+set -e
+
+DEPLOY_SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+DEPLOY_HOME=${DEPLOY_SCRIPT_DIR}/..
+KUBECONFIG=${KUBECONFIG:-~/.kube/config}
+unset ENV
+cd ${DEPLOY_HOME}
+
+if [ "${1}" == "DIND" ]; then
+  shift
+  echo "Running DIND: with params: '$@' in dir ${PWD}..."
+else
+  echo "Running PRE-DIND with params:'$@' in dir ${PWD}..."
+  term=
+  if [ -t 0 ] ; then
+    # Interactive TTY
+    term=t
+    echo "TTY"
+  else
+    echo "NO TTY"
+  fi
+  mkdir -p ./tmp
+  cp ${KUBECONFIG} ./tmp/kubecfg
+
+  # Unique name...
+  DOCKER_TAG=quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:1.0-SNAPSHOT
+  docker build -t ${DOCKER_TAG} .
+  echo "Term param = ${term}"
+  docker run \
+    -i${term} \
+    --rm=true \
+    -e KUBECONFIG=/var/lib/app_deploy/tmp/kubecfg \
+    ${DOCKER_TAG} \
+    DIND $@
+
+  echo "Deploy Success!"
+  exit 0
+fi
+
+if [ "${1}" == "debug" ]; then
+  bash -i
+  exit 0
+fi
+echo "Using kubeconfig:${KUBECONFIG}"
+/var/lib/kb8or/kb8or.rb $@
