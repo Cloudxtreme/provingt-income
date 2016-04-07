@@ -6,11 +6,11 @@ VOLUME /tmp
 
 USER root
 
-ADD uk.gov.digital.ho.proving.income.api-1.0-SNAPSHOT.jar /
+ADD uk.gov.digital.ho.proving.income.api-3.0-SNAPSHOT.jar /
 ADD src/main/resources/json/ src/main/resources/json/
 
 ENTRYPOINT [ \
 	"java", \
 	"-Dcom.sun.management.jmxremote.local.only=false", \
 	"-Djava.security.egd=file:/dev/./urandom","-jar", \
-	"/uk.gov.digital.ho.proving.income.api-1.0-SNAPSHOT.jar"]
+	"/uk.gov.digital.ho.proving.income.api-3.0-SNAPSHOT.jar"]
