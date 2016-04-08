@@ -3,12 +3,19 @@ set -e
 
 echo "build number:: " $BUILD_NUMBER
 
+REGISTRY="${REGISTRY:-quay.io}"
+IMAGE="uk.gov.digital.ho.proving.income"
+VERSION=v0.1.${BUILD_VERSION:-0-dev}
+TAG=${REGISTRY}/ukhomeofficedigital/${IMAGE}:${VERSION}.BUILD_NUMBER
+
+echo "tag:: " $TAG
+
+
+
 exit 0
 
 BUILD_HOME_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 IMAGE="rotm-app"
-REGISTRY="${REGISTRY:-quay.io}"
-VERSION=v0.1.${BUILD_VERSION:-0-dev}
 TAG=${REGISTRY}/ukhomeofficedigital/${IMAGE}:${VERSION}
 GA_TAG_ID=UA-70918942-1
 APP_HOST=${IMAGE}
