@@ -142,7 +142,7 @@ task pushDockerImage(type: Exec) {
     args "-c", "docker push quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:${version}"
 }
 
-task copyArtifacts << {
+task copyArtifacts {
     println "copying artifacts"
     copy {
         from 'build/libs/'
