@@ -28,6 +28,9 @@ docker rm $(docker ps -aq)
 docker rmi $(docker images | grep build.uk.gov.digital.ho.proving.income.service | awk '{print $3'})
 
 # 3. Build docker image to run jar from artifacts
+echo "build docker image for app::"
+pwd
+ls
 VERSION=`cat artifacts/version`
 docker build -f src/main/docker/Dockerfile -t quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:$VERSION .
 
