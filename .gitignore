@@ -11,3 +11,4 @@ build
 runtime
 *.log
 *.iml
+artifacts

@@ -1,7 +1,11 @@
 import com.wiredforcode.gradle.spawn.*
 
 group 'uk.gov.digital.ho.proving.income'
-version '3.0-SNAPSHOT'
+version '1.0'
+
+if ("$System.env.BUILD_NUMBER" != 'null') {
+    project.version = project.version + ".$System.env.BUILD_NUMBER"
+}
 
 def jarName = 'uk.gov.digital.ho.proving.income.api'
 def cucumberVersion = "1.2.4"
@@ -91,7 +95,13 @@ docker {
     registry = "https://quay.io/repository/asmoores/"
 }
 
-task buildDocker(type: Docker, dependsOn: build) {
+task updateVersionForDocker {
+    def versionFile = new File('services/tmp/version')
+    versionFile.write(project.version)
+}
+
+
+task buildDocker(type: Docker) {
     registry = "quay.io/ukhomeofficedigital"
     push = false
 //    tag = 'quay.io/asmoores/' + jar.baseName + version
@@ -106,9 +116,14 @@ task buildDocker(type: Docker, dependsOn: build) {
             from "src/main/resources/json/"
             into "build/docker/src/main/resources/json/"
         }
-
+        copy {
+            from "src/main/resources/run.sh"
+            into "build/docker/src/main/resources/"
+        }
     }
 }
+
+buildDocker.dependsOn build,updateVersionForDocker
 
 task startServer(type: SpawnProcessTask, dependsOn: 'assemble') {
     command "java -jar ${projectDir}/build/libs/${jarName}-${version}.jar"
@@ -124,6 +139,19 @@ gradle.startParameter.continueOnFailure = true
 
 task pushDockerImage(type: Exec) {
     executable "sh"
-    args "-c", "docker push quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:3.0-SNAPSHOT"
+    args "-c", "docker push quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:${version}"
 }
 
+task copyArtifacts << {
+    println "copying artifacts"
+    copy {
+        from 'build/libs/'
+        into '/artifacts/'
+        include '*.jar'
+    }
+    copy {
+        from 'services/tmp/'
+        into '/artifacts/'
+        include 'version'
+    }
+}
