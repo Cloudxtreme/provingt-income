@@ -150,7 +150,7 @@ task copyArtifacts {
         include '*.jar'
     }
     doLast {
-        def versionFile = new File('artifacts/version')
+        def versionFile = new File('/artifacts/version')
         versionFile.write(project.version)
     }
 }
