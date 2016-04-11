@@ -121,11 +121,14 @@ task buildDocker(type: Docker) {
             into "build/docker/src/main/resources/"
         }
     }
-    doLast {
-        def versionFile = new File('artifacts/version')
-        versionFile.write(project.version)
-    }
 }
+
+task createVersionFile {
+    def versionFile = new File('artifacts/version')
+    versionFile.write(project.version)
+}
+
+build.finalizedBy createVersionFile
 
 buildDocker.dependsOn build//,updateVersionForKubernetes
 
