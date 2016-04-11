@@ -8,6 +8,7 @@ echo "build number:: " $BUILD_NUMBER
 # -----
 
 # 0. Initial conditions
+docker stop $(docker ps -aq)
 docker rm $(docker ps -aq)
 docker rmi -f $(docker images | grep build.uk.gov.digital.ho.proving.income.service | awk '{print $3'})
 
