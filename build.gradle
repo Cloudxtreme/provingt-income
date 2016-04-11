@@ -123,13 +123,6 @@ task buildDocker(type: Docker) {
     }
 }
 
-task createVersionFile {
-    def versionFile = new File('artifacts/version')
-    versionFile.write(project.version)
-}
-
-build.finalizedBy createVersionFile
-
 buildDocker.dependsOn build//,updateVersionForKubernetes
 
 task startServer(type: SpawnProcessTask, dependsOn: 'assemble') {
@@ -156,4 +149,6 @@ task copyArtifacts << {
         into '/artifacts/'
         include '*.jar'
     }
+    def versionFile = new File('artifacts/version')
+    versionFile.write(project.version)
 }
