@@ -12,6 +12,8 @@ docker stop $(docker ps -aq) || true
 docker rm $(docker ps -aq) || true
 docker rmi -f $(docker images | grep build.uk.gov.digital.ho.proving.income.service | awk '{print $3'}) || true
 
+mkdir artifacts
+
 # 1. Create Docker image to execute build in
 echo "building docker image to execute app build"
 docker build -f src/main/docker/Dockerfile.build -t build.uk.gov.digital.ho.proving.income.service .
