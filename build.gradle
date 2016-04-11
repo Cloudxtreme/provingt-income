@@ -95,10 +95,10 @@ docker {
     registry = "https://quay.io/repository/asmoores/"
 }
 
-//task updateVersionForDocker {
-//    def versionFile = new File('services/tmp/version')
-//    versionFile.write(project.version)
-//}
+task updateVersionForKubernetes {
+    def versionFile = new File('services/tmp/version')
+    versionFile.write(project.version)
+}
 
 
 task buildDocker(type: Docker) {
@@ -121,9 +121,13 @@ task buildDocker(type: Docker) {
             into "build/docker/src/main/resources/"
         }
     }
+    doLast {
+        def versionFile = new File('artifacts/version')
+        versionFile.write(project.version)
+    }
 }
 
-buildDocker.dependsOn build //,updateVersionForDocker
+buildDocker.dependsOn build,updateVersionForKubernetes
 
 task startServer(type: SpawnProcessTask, dependsOn: 'assemble') {
     command "java -jar ${projectDir}/build/libs/${jarName}-${version}.jar"
@@ -148,10 +152,5 @@ task copyArtifacts << {
         from 'build/libs/'
         into '/artifacts/'
         include '*.jar'
-    }
-    copy {
-        from 'services/tmp/'
-        into '/artifacts/'
-        include 'version'
     }
 }
