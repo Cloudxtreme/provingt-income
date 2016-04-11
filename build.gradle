@@ -95,10 +95,10 @@ docker {
     registry = "https://quay.io/repository/asmoores/"
 }
 
-task updateVersionForDocker {
-    def versionFile = new File('services/tmp/version')
-    versionFile.write(project.version)
-}
+//task updateVersionForDocker {
+//    def versionFile = new File('services/tmp/version')
+//    versionFile.write(project.version)
+//}
 
 
 task buildDocker(type: Docker) {
