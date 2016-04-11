@@ -21,7 +21,7 @@ echo "running docker image as named container"
 docker run --name build.uk.gov.digital.ho.proving.income.service\
 	-e "BUILD_NUMBER=$BUILD_NUMBER" \
 	-v ${PWD}/artifacts:/artifacts \
-	build.uk.gov.digital.ho.proving.income.service echo "doing stuff!"
+	build.uk.gov.digital.ho.proving.income.service pwd; ls /artifacts
 
 # 2.1 Tidy up
 docker rm $(docker ps -aq)
