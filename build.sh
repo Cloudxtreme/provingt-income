@@ -8,9 +8,9 @@ echo "build number:: " $BUILD_NUMBER
 # -----
 
 # 0. Initial conditions
-docker stop $(docker ps -aq)
-docker rm $(docker ps -aq)
-docker rmi -f $(docker images | grep build.uk.gov.digital.ho.proving.income.service | awk '{print $3'})
+docker stop $(docker ps -aq) || true
+docker rm $(docker ps -aq) || true
+docker rmi -f $(docker images | grep build.uk.gov.digital.ho.proving.income.service | awk '{print $3'}) || true
 
 # 1. Create Docker image to execute build in
 echo "building docker image to execute app build"
