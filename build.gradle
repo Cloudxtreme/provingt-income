@@ -95,10 +95,10 @@ docker {
     registry = "https://quay.io/repository/asmoores/"
 }
 
-task updateVersionForKubernetes {
-    def versionFile = new File('services/tmp/version')
-    versionFile.write(project.version)
-}
+//task updateVersionForKubernetes {
+//    def versionFile = new File('services/tmp/version')
+//    versionFile.write(project.version)
+//}
 
 
 task buildDocker(type: Docker) {
@@ -127,7 +127,7 @@ task buildDocker(type: Docker) {
     }
 }
 
-buildDocker.dependsOn build,updateVersionForKubernetes
+buildDocker.dependsOn build//,updateVersionForKubernetes
 
 task startServer(type: SpawnProcessTask, dependsOn: 'assemble') {
     command "java -jar ${projectDir}/build/libs/${jarName}-${version}.jar"
