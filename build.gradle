@@ -159,7 +159,7 @@ buildDocker.dependsOn build//,updateVersionForKubernetes
 // Automated Testing, start app before testing and shutdown after.
 // --------------------------------------------------------------
 task startServer(type: SpawnProcessTask, dependsOn: 'assemble') {
-    command "java -jar ${projectDir}/build/libs/${jarName}-${version}.jar"
+    command "java -jar ${projectDir}/build/libs/${jarName}-${version}.jar --server.port=9080"
     ready 'Started ServiceRunner'
 }
 
