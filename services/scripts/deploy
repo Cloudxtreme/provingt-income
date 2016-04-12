@@ -3,7 +3,7 @@
 
 set -e
 
-VERSION=`cat services/tmp/version`
+VERSION=`cat tmp/version`
 echo "$VERSION"
 
 DEPLOY_SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
