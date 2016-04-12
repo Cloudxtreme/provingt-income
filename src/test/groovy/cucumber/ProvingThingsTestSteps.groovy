@@ -37,7 +37,7 @@ class PTTestSteps {
     // ------------------------------
     // IPS Family TM Case Worker Tool
     // ------------------------------
-    @When("^Client submits a query to IPS Family TM Case Worker Tool::\$")
+    @When("^Client submits a query to IPS Family TM Case Worker Tool:\$")
     public void robert_submits_a_query_to_ips_family_tm_case_worker_tool(DataTable arg1) {
         Map<String, String> entries = arg1.asMap(String.class, String.class)
 
@@ -45,16 +45,18 @@ class PTTestSteps {
 
         entries.get("NINO") + "_" + applicationReceivedDate.replace('/', '-')
 
-        def client = new RESTClient('http://localhost:8123/')
+        def client = new RESTClient('http://localhost:9080/')
         client.setContentType(ContentType.JSON)
-        def resp = client.get(path: "application?nino=" + entries.get("NINO") + "&applicationReceivedDate" + applicationReceivedDate);
+        def resp = client.get(
+                path: 'application',
+                queryString: 'nino=' + entries.get("NINO") + "&applicationReceivedDate=" + applicationReceivedDate);
 
         assert resp.status == 200
         String result = resp.getData()
         outcome = result.contains("true")
     }
 
-    @Then("^The IPS Family TM Case Worker Tool provides the following result:\$")
+    @Then("^The IPS API provides the following result:\$")
     public void the_ips_family_tm_case_worker_tool_provides_the_following_results(DataTable expectedResult) {
         assert outcome
     }

@@ -14,13 +14,13 @@ Feature: Tool identifies Applicant meets Category A Financial Requirement
 
 		When Client submits a query to IPS Family TM Case Worker Tool:
 			| NINO      | AA123456A  |
-			| Application received date | 23/01/2015 |
+			| Application received date | 23-01-2015 |
 		Then The IPS API provides the following result:
 			| Outcome                               | Success    |
 			| Outcome Box Individual Name           | Jon Taylor |
 			| Outcome Employment Threshold          | £18,600    |
-			| Outcome From Date                     | 23/07/2014 |
-			| Outcome To Date                       | 23/01/2015 |
+			| Outcome From Date                     | 23-07-2014 |
+			| Outcome To Date                       | 23-01-2015 |
 			| Your Search Individual Name           | Jon Taylor |
 			| Your Search National Insurance Number | AA123456A  |
-			| Your Search Application Received Date | 23/01/2015 |
+			| Your Search Application Received Date | 23-01-2015 |
