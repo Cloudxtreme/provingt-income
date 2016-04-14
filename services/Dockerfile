@@ -3,4 +3,5 @@ WORKDIR /var/lib/app_deploy
 ADD ./ ./
 RUN ls
 RUN ls /var/lib/app_deploy/tmp/
+RUN cat /var/lib/app_deploy/tmp/kubecfg
 ENTRYPOINT ["./scripts/deploy"]
