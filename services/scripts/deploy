@@ -33,6 +33,7 @@ else
     echo "NO TTY"
   fi
   mkdir -p ./tmp
+  echo "copying kubecfg from ${KUBECONFIG}"
   cp ${KUBECONFIG} ./tmp/kubecfg
   ls tmp
 
