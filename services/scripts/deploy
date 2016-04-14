@@ -34,6 +34,7 @@ else
   fi
   mkdir -p ./tmp
   cp ${KUBECONFIG} ./tmp/kubecfg
+  ls tmp
 
   # Unique name...
   DOCKER_TAG=quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:${VERSION}
