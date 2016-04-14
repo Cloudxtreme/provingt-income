@@ -5,7 +5,7 @@ version '1.0'
 
 // When building in a docker container a shell script controls the build params via env variables.  Override the version
 // number with the envronment variable if it exists.  Otherwise use Gradle variable set above as source for version
-// number.  [If Gradle were the sole build tool only the build number would be required from the environment.]
+// number.  [If Gradle were the sole build tool ONLY the build number would be required from the environment.]
 project.ext{
     versionNumber = System.getenv('VERSION_NUMBER')
     if (versionNumber == null) {
@@ -116,14 +116,10 @@ task versionDetails() {
 // --------------------------------------------------------------
 // Docker
 // --------------------------------------------------------------
-docker {
-    registry = "https://quay.io/repository/asmoores/"
-}
-
-task buildDocker(type: Docker) {
-    registry = "quay.io/ukhomeofficedigital"
-    push = false
-//    tag = 'quay.io/asmoores/' + jar.baseName + version
+task buildDocker(type: Docker, dependsOn: build) {
+    registry = "quay.io"
+    push = true
+    tag = "quay.io/ukhomeofficedigital/${jarName}"
     applicationName = jar.baseName
     dockerfile = file('build/docker/Dockerfile')
     doFirst {
@@ -145,14 +141,6 @@ task buildDocker(type: Docker) {
         }
     }
 }
-
-// The Dokcer task should be able to do the push but it fails, so do it with this task for the time being.
-task pushDockerImage(type: Exec) {
-    executable "sh"
-    args "-c", "docker push quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:${version}"
-}
-
-buildDocker.dependsOn build//,updateVersionForKubernetes
 // --------------------------------------------------------------
 
 // --------------------------------------------------------------
