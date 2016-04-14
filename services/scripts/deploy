@@ -3,8 +3,14 @@
 
 set -e
 
-VERSION=`cat tmp/version`
-echo "$VERSION"
+if [ -n $DEPLOYMENT_BUILD_NUMBER ]; then
+	VERSION="${DEPLOYMENT_BUILD_NUMBER}"
+	echo -n "${VERSION}" > tmp/version
+else
+	VERSION=`cat tmp/version`
+fi
+
+echo "deploying version: " $VERSION
 
 DEPLOY_SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 DEPLOY_HOME=${DEPLOY_SCRIPT_DIR}/..
