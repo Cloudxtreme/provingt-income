@@ -3,6 +3,8 @@
 
 set -e
 
+echo "build number: " $DEPLOYMENT_BUILD_NUMBER
+
 if [ -n $DEPLOYMENT_BUILD_NUMBER ]; then
 	VERSION="${DEPLOYMENT_BUILD_NUMBER}"
 	mkdir -p tmp
