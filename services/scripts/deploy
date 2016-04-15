@@ -3,10 +3,9 @@
 
 set -e
 
-echo "build number: " $DEPLOYMENT_BUILD_NUMBER
+echo "build version: " $VERSION
 
-if [ -n $DEPLOYMENT_BUILD_NUMBER ]; then
-	VERSION="${DEPLOYMENT_BUILD_NUMBER}"
+if [ ! -z "${VERSION}" -a "${VERSION}" != " " ]; then
 	mkdir -p tmp
 	echo -n "${VERSION}" > tmp/version
 else
@@ -19,6 +18,9 @@ DEPLOY_SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 DEPLOY_HOME=${DEPLOY_SCRIPT_DIR}/..
 KUBECONFIG=${KUBECONFIG:-~/.kube/config}
 unset ENV
+
+echo "after unset version is " $VERSION
+
 cd ${DEPLOY_HOME}
 
 if [ "${1}" == "DIND" ]; then
@@ -38,6 +40,8 @@ else
   echo "copying kubecfg from ${KUBECONFIG}"
   cp ${KUBECONFIG} ./tmp/kubecfg
   ls tmp
+
+  echo "version is ${VERSION}"
 
   # Unique name...
   DOCKER_TAG=quay.io/ukhomeofficedigital/uk.gov.digital.ho.proving.income.api:${VERSION}
